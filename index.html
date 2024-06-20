@@ -5,13 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Python Editor</title>
     <style>
-         @font-face {
+        @font-face {
             font-family: 'LemonMilk';
             src: url('lemon_milk.otf') format('opentype');
         }
         body {
             font-family: 'LemonMilk', Arial, sans-serif; /* Lemon Milk font */
-            font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -41,7 +40,7 @@
         }
         #editor {
             width: 100%;
-            height: calc(100vh - 160px);
+            height: calc(100vh - 200px);
             border: 1px solid #ccc;
             background-color: #fff;
             padding: 15px;
@@ -67,7 +66,7 @@
         }
         #output {
             width: 100%;
-            height: calc(100vh - 160px);
+            height: calc(100vh - 200px);
             border: 1px solid #ccc;
             background-color: #fff;
             padding: 15px;
@@ -82,6 +81,11 @@
             display: flex;
             justify-content: center;
             width: 100%;
+        }
+        #footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #555;
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js"></script>
@@ -117,6 +121,13 @@
             link.href = window.URL.createObjectURL(blob);
             link.click();
         }
+
+        function updateCopyright() {
+            const year = new Date().getFullYear();
+            document.getElementById('footer').innerText = `© ${year} Your Company`;
+        }
+
+        window.onload = updateCopyright;
     </script>
 </head>
 <body>
@@ -133,5 +144,6 @@
         <button id="runButton" onclick="runCode()">Run</button>
         <button id="saveButton" onclick="saveCode()">Save to device</button>
     </div>
+    <div id="footer"></div>
 </body>
 </html>
