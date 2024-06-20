@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Editor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+            background-color: #f7f7f7;
+            color: #333;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+        h1 {
+            margin-bottom: 5px;
+        }
+        #container {
+            display: flex;
+            flex: 1;
+            width: 90%;
+            max-width: 1200px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        #editorContainer, #outputContainer {
+            width: 50%;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+        #editor {
+            width: 100%;
+            height: calc(100vh - 160px);
+            border: 1px solid #ccc;
+            background-color: #fff;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 14px;
+            white-space: pre;
+            overflow: auto;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+        }
+        #runButton, #saveButton {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 5px;
+        }
+        #runButton:hover, #saveButton:hover {
+            background-color: #45a049;
+        }
+        #output {
+            width: 100%;
+            height: calc(100vh - 160px);
+            border: 1px solid #ccc;
+            background-color: #fff;
+            padding: 15px;
+            font-family: monospace;
+            white-space: pre;
+            overflow: auto;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+        }
+        #buttonContainer {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js"></script>
+    <script>
+        function runCode() {
+            let editor = document.getElementById('editor');
+            let output = document.getElementById('output');
+            output.innerHTML = '';
+
+            Sk.configure({ 
+                output: (text) => { output.innerHTML += text; },
+                read: (x) => {
+                    if (Sk.builtinFiles === undefined || Sk.builtinFiles['files'][x] === undefined)
+                        throw `File not found: '${x}'`;
+                    return Sk.builtinFiles['files'][x];
+                }
+            });
+
+            Sk.misceval.asyncToPromise(() => {
+                return Sk.importMainWithBody('<stdin>', false, editor.innerText, true);
+            }).catch((err) => {
+                output.innerHTML = err.toString();
+            });
+        }
+
+        function saveCode() {
+            let editor = document.getElementById('editor');
+            let textToSave = editor.innerText;
+            let blob = new Blob([textToSave], { type: 'text/plain' });
+            let link = document.createElement('a');
+            link.download = 'script.py';
+            link.href = window.URL.createObjectURL(blob);
+            link.click();
+        }
+    </script>
+</head>
+<body>
+    <h1>Python Editor</h1>
+    <div id="container">
+        <div id="editorContainer">
+            <div id="editor" contenteditable="true">
+print("Hello, World!")
+            </div>
+        </div>
+        <div id="outputContainer">
+            <div id="output"></div>
+        </div>
+    </div>
+    <div id="buttonContainer">
+        <button id="runButton" onclick="runCode()">Run</button>
+        <button id="saveButton" onclick="saveCode()">Save as .py</button>
+    </div>
+</body>
+</html>
